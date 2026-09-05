@@ -6,10 +6,17 @@ export default function App() {
   const [budget, setBudget] = useState(initialBudget);
   const [searchQuery, setSearchQuery] = useState('');
   const [result, setResult] = useState(null);
+  const [dishes, setDishes] = useState(initialDishes);
+
+  const handlePriceChange = (dishId, newPrice) => {
+    setDishes((prev) =>
+      prev.map((d) => (d.id === dishId ? { ...d, price: Number(newPrice) } : d))
+    );
+  };
 
   const handleCheckCompatibility = () => {
     const budgetValue = Number(budget);
-    const evaluation = evaluateCompatibility(initialResidents, initialDishes, budgetValue);
+    const evaluation = evaluateCompatibility(initialResidents, dishes, budgetValue);
     setResult(evaluation);
   };
 
@@ -17,6 +24,7 @@ export default function App() {
     setBudget(initialBudget);
     setSearchQuery('');
     setResult(null);
+    setDishes(initialDishes);
   };
 
   let displayedDishes = [];
@@ -59,9 +67,18 @@ export default function App() {
               <tr><th>ID</th><th>Dish</th><th>Diet</th><th>Price</th></tr>
             </thead>
             <tbody>
-              {initialDishes.map(d => (
+              {dishes.map(d => (
                 <tr key={d.id}>
-                  <td>{d.id}</td><td>{d.name}</td><td>{d.dietClass}</td><td>₹{d.price}</td>
+                  <td>{d.id}</td><td>{d.name}</td><td>{d.dietClass}</td>
+                  <td>
+                    ₹
+                    <input
+                      type="number"
+                      value={d.price}
+                      onChange={(e) => handlePriceChange(d.id, e.target.value)}
+                      style={{ width: '60px', marginLeft: '5px' }}
+                    />
+                  </td>
                 </tr>
               ))}
             </tbody>
